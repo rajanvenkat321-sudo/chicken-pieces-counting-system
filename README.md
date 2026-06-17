@@ -1,19 +1,28 @@
-# 🐔 Chicken Pieces Detection & Counting System
+<div align="center">
+  <h1>🍗 Chicken Pieces Detection & Counting System</h1>
+  <p><strong>A complete, end-to-end AI-powered computer vision system to detect and count chicken pieces.</strong></p>
 
-![YOLOv8](https://img.shields.io/badge/Model-YOLOv8-blue?style=for-the-badge&logo=ultralytics)
-![Python](https://img.shields.io/badge/Python-3.8%2B-green?style=for-the-badge&logo=python)
-![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-orange?style=for-the-badge&logo=pytorch)
+  ![YOLOv8](https://img.shields.io/badge/Model-YOLOv8-blue?style=for-the-badge&logo=ultralytics)
+  ![Python](https://img.shields.io/badge/Python-3.8%2B-green?style=for-the-badge&logo=python)
+  ![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-orange?style=for-the-badge&logo=pytorch)
+  ![Tkinter](https://img.shields.io/badge/GUI-Tkinter-purple?style=for-the-badge)
 
-A complete, end-to-end AI-powered computer vision system to detect and count chicken pieces as a single class (`chicken_piece`) using state-of-the-art **YOLOv8**. The pipeline is optimized for training on custom datasets with heavy data augmentation.
+</div>
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-- **🚀 YOLOv8 Training Pipeline**: Automated script (`train.py`) with optimal hyperparameters and heavy data augmentation for custom datasets.
-- **🔄 Label Conversion**: Utility script (`convert_labels.py`) to easily remap all class IDs to a single class (0) for focused detection.
-- **📷 Inference & Counting**: Robust inference script (`predict.py`) to test the model on new images and provide accurate counts.
-- **📊 Evaluation**: Evaluation script (`evaluate.py`) to generate validation and test metrics.
+- **🚀 Live Dashboard (`dashboard.py`)**: A premium Tkinter GUI for real-time inference. Select images, adjust confidence/IoU thresholds on the fly, and see dynamic bounding boxes and piece counts. Includes an **Auto-Tune** feature!
+- **🤖 YOLOv8 Training Pipeline (`train.py`)**: Automated script with optimal hyperparameters and heavy data augmentation for robust detection.
+- **🛠️ Dataset Utilities**:
+  - `convert_labels.py`: Remap class IDs to a single class (0).
+  - `prepare_dataset.py`: Prepare YOLO `.yaml` configuration dynamically.
+  - `auto_label.py`: Auto-annotate new images using your trained model.
+  - `add_backgrounds.py`: Data augmentation script to introduce varied backgrounds.
+- **📈 Tuning & Evaluation**:
+  - `tune.py`: Hyperparameter evolution for maximizing mAP.
+  - `evaluate.py`: Generate rigorous validation metrics.
 
 ## 📁 Repository Structure
 
@@ -24,11 +33,15 @@ chicken-pieces-counting-system/
 │   ├── labels/                  # YOLO format .txt labels
 │   └── data.yaml                # Dataset configuration
 ├── scripts/
-│   ├── convert_labels.py        # Remap all class IDs to 0
-│   ├── prepare_dataset.py       # Dataset preparation & YAML generation
-│   ├── train.py                 # Model training (YOLOv8m)
+│   ├── dashboard.py             # Live GUI application
+│   ├── train.py                 # Model training (YOLOv8)
+│   ├── predict.py               # Run inference from CLI
 │   ├── evaluate.py              # Evaluation & metrics
-│   └── predict.py               # Run inference on new images
+│   ├── tune.py                  # Hyperparameter tuning
+│   ├── auto_label.py            # Auto-annotate new datasets
+│   ├── add_backgrounds.py       # Background augmentation
+│   ├── convert_labels.py        # Remap all class IDs to 0
+│   └── prepare_dataset.py       # Dataset preparation & YAML generation
 ├── runs/                        # Training outputs, weights, plots
 ├── requirements.txt             # Project dependencies
 └── README.md                    # Project documentation
@@ -36,21 +49,29 @@ chicken-pieces-counting-system/
 
 ## 🛠️ Installation
 
-1. **Navigate to the repository:**
+1. **Clone the repository:**
    ```bash
-   cd "New folder"
+   git clone https://github.com/rajanvenkat321-sudo/chicken-pieces-counting-system.git
+   cd chicken-pieces-counting-system
    ```
 
-2. **Install the required dependencies:**
+2. **Install the dependencies:**
    ```bash
-   pip install -r runs/requirements.txt
+   pip install -r requirements.txt
    ```
-   *Note: Ensure `ultralytics`, `torch`, `torchvision`, and `opencv-python` are installed properly.*
+   > **Note**: Ensure you have `ultralytics`, `torch`, `torchvision`, `opencv-python`, and `Pillow` installed.
 
-## 🚀 Usage
+## 🚀 Usage Guide
 
-### 1. Data Preparation
-Convert all labels to a single class (run ONCE):
+### 🎨 1. Launch the Live Dashboard (Recommended)
+Experience the model interactively through the built-in GUI:
+```bash
+python scripts/dashboard.py
+```
+*Features: Image selection, interactive confidence/IoU sliders, auto-tuning, and real-time detection rendering.*
+
+### 🛠️ 2. Data Preparation
+Convert all labels to a single class (Run ONCE):
 ```bash
 python scripts/convert_labels.py
 ```
@@ -59,51 +80,34 @@ Regenerate dataset configuration (`data.yaml`):
 python scripts/prepare_dataset.py --generate_yaml_only
 ```
 
-### 2. Training the Model
-Start training (300 epochs, YOLOv8m, heavy augmentation):
+### 🧠 3. Training the Model
+Start training (YOLOv8m, heavy augmentation):
 ```bash
 python scripts/train.py
 ```
-*For maximum accuracy (slower):*
-```bash
-python scripts/train.py --model yolov8l.pt --epochs 500
-```
 
-### 3. Evaluation
-Evaluate the model on validation and test sets:
+### 📊 4. Evaluation & Prediction
+Evaluate the model on the validation set:
 ```bash
 python scripts/evaluate.py --split val
-python scripts/evaluate.py --split test
 ```
-
-### 4. Prediction & Counting
-Run inference on new images:
+Run CLI prediction on new images:
 ```bash
 python scripts/predict.py --source datasets/images/test/
-python scripts/predict.py --source path/to/your/image.jpg
 ```
 
-## 🧠 Model Training Details
+## 🧠 Model Specifications
 
-| Setting         | Value             |
-|----------------|-------------------|
-| Model          | YOLOv8m (medium)  |
-| Class          | chicken_piece (1) |
-| Epochs         | 300               |
-| Batch size     | Auto (≤8)         |
-| Image size     | 640×640           |
-| LR schedule    | Cosine annealing  |
-| Augmentation   | Heavy (mosaic, mixup, flips, erasing) |
-| Cache          | RAM (fast for small datasets) |
+| Setting | Value |
+|---------|-------|
+| **Architecture** | YOLOv8m (Medium) |
+| **Classes** | `chicken_piece` (ID: 0) |
+| **Input Size** | 640x640 |
+| **Optimization** | Cosine Annealing LR |
+| **Augmentation** | Heavy (Mosaic, Mixup, Flips, Erasing) |
 
-## 💡 Tips for Better Accuracy
-- **More data = better accuracy.** Add more labeled images (aim for 100+).
-- Use **[Roboflow](https://roboflow.com)** (web-based, easiest), **[CVAT](https://cvat.ai)**, or **LabelImg** to label new images.
-- If you get 0 detections, lower the confidence threshold: `--conf 0.15`
-
-## 🏷️ YOLO Label Format
-Each `.txt` file (same name as image) — one row per chicken piece:
-```
-0 <x_center> <y_center> <width> <height>
-```
-*All values are **normalized** (0.0 – 1.0) relative to image size. Class ID is always `0` = `chicken_piece`.*
+## 💡 Tips for Maximum Accuracy
+- **Expand the Dataset**: More labeled images = better generalization.
+- **Tune Hyperparameters**: Use `python scripts/tune.py` to evolve hyperparameters specifically for your dataset.
+- **Auto-labeling**: Use `scripts/auto_label.py` with your best weights to quickly label new unannotated images.
+- **Threshold Adjustment**: If false positives occur, increase the Confidence threshold. If pieces are missed, lower it. Use the Auto-Tune button in the dashboard!
